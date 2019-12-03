@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import queryString from "query-string";
 import { useRouter } from "next/router";
-import { LayoutComponent } from "./layout";
+import { LayoutComponent } from "../src/layout";
 
 const CLIENT_ID = "6hf0fiwuk2127mjhs7hkuzy4xpqijf";
 const AUTH_URL = "https://id.twitch.tv/oauth2/authorize";
