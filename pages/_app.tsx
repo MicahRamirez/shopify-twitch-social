@@ -6,6 +6,7 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import theme from "../src/theme";
 import { AppProvider } from "@shopify/polaris";
 import "@shopify/polaris/styles.css";
+import translations from "@shopify/polaris/locales/en.json";
 
 export default class MyApp extends App {
   componentDidMount() {
@@ -27,7 +28,7 @@ export default class MyApp extends App {
         <ThemeProvider theme={theme}>
           {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
           <CssBaseline />
-          <AppProvider i18n={{}}>
+          <AppProvider i18n={translations}>
             <Component {...pageProps} />
           </AppProvider>
         </ThemeProvider>
