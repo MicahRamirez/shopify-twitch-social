@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import queryString from "query-string";
 import { useRouter } from "next/router";
+import { LayoutComponent } from "./layout";
 
 const CLIENT_ID = "6hf0fiwuk2127mjhs7hkuzy4xpqijf";
 const AUTH_URL = "https://id.twitch.tv/oauth2/authorize";
@@ -28,11 +29,11 @@ const Index: React.FC<{}> = _ => {
     }
   }, [accessToken]);
   return (
-    <div>
-      <p>Sample App</p>
-      <p>{userToken}</p>
-      {!userToken && <LoginToTwitch />}
+    <div style={{ backgroundColor: "#F5F5F5" }}>
+      {userToken && <p>{userToken}</p>}
+      {userToken && <LoginToTwitch />}
       {userToken && <IsSubbedTo userToken={userToken} />}
+      <LayoutComponent />
     </div>
   );
 };
