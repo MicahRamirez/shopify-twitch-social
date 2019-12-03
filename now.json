@@ -6,12 +6,16 @@
     "use": "@now/next"
   }],
   "routes": [{
-      "src": "/(.*)",
-      "dest": "/"
-    },
-    {
       "src": "/_next/static/(.*)",
       "dest": "/_next/static/$1"
+    },
+    {
+      "src": "/_next/(.*)",
+      "dest": "/_next/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/"
     }
   ]
 }
