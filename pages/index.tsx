@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import queryString from "query-string";
 import { useRouter } from "next/router";
 
-const CLIENT_ID = "sxbywtrgi38jp88hgr2gm6v4t9plsf";
+const CLIENT_ID = "6hf0fiwuk2127mjhs7hkuzy4xpqijf";
 const AUTH_URL = "https://id.twitch.tv/oauth2/authorize";
 const makeRedirectUrl = () => {
   const responseType = "token";
   const scope = "user_subscriptions openid";
-  const redirectUri = "http://localhost:3000";
+  const redirectUri = "https://kusora.myshopify.com/";
   const claims = "email picture preferred_username";
   return `${AUTH_URL}?${queryString.stringify({
     client_id: CLIENT_ID,
@@ -21,7 +21,6 @@ const makeRedirectUrl = () => {
 const Index: React.FC<{}> = _ => {
   const router = useRouter();
   const [userToken, setUserToken] = useState<string>();
-  console.log(router);
   const accessToken = queryString.parse(router.asPath.slice(1)).access_token;
   useEffect(() => {
     if (accessToken && typeof accessToken === "string") {
@@ -42,8 +41,7 @@ const IsSubbedTo: React.FC<{ userToken: string }> = ({ userToken }) => {
   return <div>{userToken}</div>;
 };
 
-const LoginToTwitch: React.FC<{}> = props => {
-  console.log(props);
+const LoginToTwitch: React.FC<{}> = _ => {
   const redirectUrl = makeRedirectUrl();
   console.log(redirectUrl);
   return <a href={redirectUrl}>Login with Twitch</a>;
