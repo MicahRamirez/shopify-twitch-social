@@ -1,35 +1,21 @@
 import React, { useState } from "react";
-import { Select, Layout, Card, Button } from "@shopify/polaris";
+import { Layout, Card } from "@shopify/polaris";
+import { CreateExclusivityRule, ExclusivityRule } from "./exclusivity-select";
 
-const MOCK_ITEMS = [
-  {
-    id: "1",
-    onlineStoreUrl: "someUrl",
-    title: "Hat"
-  },
-  {
-    id: "2",
-    onlineStoreUrl: undefined,
-    title: "Mug"
-  },
-  {
-    id: "3",
-    onlineStoreUrl: "someUrl",
-    title: "Tshirt"
-  },
-  {
-    id: "1",
-    onlineStoreUrl: "someUrl",
-    title: "Tenga"
-  }
-];
-
-interface ExclusivityRule {}
+const PendingRule: React.FC<{ rule: { label: string; value: string } }> = ({
+  rule
+}) => {
+  return (
+    <Card>
+      <img src="/smiley.png" alt="smiley-face" />
+      {rule.value}
+    </Card>
+  );
+};
 
 /**
  * Dropdown with all listed items in the store,
  * on select add a new entry for a rule
- *
  */
 export const LayoutComponent: React.FC<{}> = _ => {
   // used to hold rules that the user in attempting to configure for exclusivity
@@ -38,79 +24,20 @@ export const LayoutComponent: React.FC<{}> = _ => {
   const [pendingRules, mergePendingRules] = useState<ExclusivityRule[]>();
   return (
     <Layout>
-      <Layout.Section>
+      <Layout.AnnotatedSection
+        title="Rules"
+        description="Create new or update existing rules to make your merch exclusive!"
+      >
         <Card title="Select a product to add an exclusivity rule.">
           <CreateExclusivityRule
+            key={`${pendingRules ? pendingRules.length : "default"}`}
             pendingRules={pendingRules}
             mergePendingRules={mergePendingRules}
           />
         </Card>
-      </Layout.Section>
+        {pendingRules && pendingRules.map(rule => <PendingRule rule={rule} />)}
+      </Layout.AnnotatedSection>
+      <Layout.Section></Layout.Section>
     </Layout>
-  );
-};
-
-interface RuleOptions {
-  // an option must have a label and id
-  label: string;
-  id: string;
-  // it can have other properties that we want to maintain as well
-  [x: string]: string;
-}
-
-const CreateExclusivityRule: React.FC<{
-  mergePendingRules: Function;
-  pendingRules: ExclusivityRule[] | undefined;
-}> = ({ mergePendingRules, pendingRules }) => {
-  const [selected, setSelected] = useState<RuleOptions>();
-  // probably need to memo
-  const options = MOCK_ITEMS.map(({ id, title, ...rest }) => ({
-    ...{ value: id, label: title },
-    ...rest
-  }));
-  return (
-    <div
-      style={{
-        display: "inline-block",
-        marginBottom: "24px",
-        marginTop: "24px"
-      }}
-    >
-      <div
-        style={{
-          display: "inline-block",
-          paddingRight: "12px",
-          paddingLeft: "12px"
-        }}
-      >
-        <Select
-          options={options}
-          label="Add a new exclusivity rule"
-          onChange={val => {
-            console.log(val);
-            setSelected({ label: val, id: val });
-          }}
-        ></Select>
-      </div>
-      <div
-        style={{
-          paddingLeft: "12px",
-          paddingRight: "12px",
-          display: "inline-block"
-        }}
-      >
-        <Button
-          onClick={() => {
-            if (pendingRules) {
-              mergePendingRules([...pendingRules, selected]);
-            } else {
-              mergePendingRules(selected);
-            }
-          }}
-        >
-          Add a rule
-        </Button>
-      </div>
-    </div>
   );
 };
