@@ -14,6 +14,10 @@
       "dest": "/_next/$1"
     },
     {
+      "src": "/public/(.*)",
+      "dest": "/public/$1"
+    },
+    {
       "src": "/(.*)",
       "dest": "/"
     }
