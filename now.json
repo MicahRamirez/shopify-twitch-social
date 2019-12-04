@@ -15,18 +15,7 @@
       "dest": "/_next/static/$1"
     },
     {
-      "src": "/_next/(.*)",
-      "dest": "/_next/$1"
-    },
-    {
-      "src": "/images/(.*)",
-      "headers": {
-        "cache-control": "s-maxage=31536000,immutable"
-      },
-      "dest": "/$1"
-    },
-    {
-      "src": "/public/(.*)",
+      "src": "public/(.*)",
       "dest": "/$1"
     },
     {
