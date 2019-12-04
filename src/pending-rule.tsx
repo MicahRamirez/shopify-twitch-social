@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Card,
   Form,
   FormLayout,
   RangeSlider,
-  Subheading
+  ButtonGroup,
+  Button,
+  ChoiceList
 } from "@shopify/polaris";
 
 const testImagePaths: { [numberIdx: number]: string } = {
@@ -19,8 +21,14 @@ const randomIntInRange = (max: number) => {
 
 export const PendingRule: React.FC<{
   rule: { label: string; value: string };
-}> = ({ rule }) => {
+  setApprovedRules: Function;
+  setPendingRules: Function;
+  handleRuleApproval: Function;
+}> = ({ rule, handleRuleApproval, setApprovedRules, setPendingRules }) => {
   const [subscriberLength, setSubscriberLength] = useState(0);
+  const [subscriberTier, setSubscriberTier] = useState([]);
+  const handleChange = useCallback(value => setSubscriberTier(value), []);
+
   // todo REMOVE
   const [ruleRandomNum, setRuleRandomNum] = useState();
   useEffect(() => {
@@ -43,13 +51,12 @@ export const PendingRule: React.FC<{
             <p> {rule.label}</p>
           </div>
         </div>
-        <div>
+        <div style={{ paddingTop: "24px", paddingBottom: "24px" }}>
           <Form onSubmit={() => console.log("submitted")}>
             <FormLayout>
-              <Subheading>Minimum Subscriber Period</Subheading>
               <RangeSlider
                 value={subscriberLength}
-                label="Minimum Subscriber Period (Months)"
+                label="Minimum subscriber period (in months)"
                 min={0}
                 max={24}
                 output
@@ -60,46 +67,50 @@ export const PendingRule: React.FC<{
                   }
                 }}
               />
-              <RangeSlider
-                value={subscriberLength}
-                label="Minimum Subscriber Period (Months)"
-                min={0}
-                max={24}
-                output
-                onChange={val => {
-                  console.log("Rangeslider value", val);
-                  if (typeof val === "number") {
-                    setSubscriberLength(val);
+              <ChoiceList
+                allowMultiple
+                onChange={handleChange}
+                selected={subscriberTier}
+                title="Tiers that can access the item"
+                choices={[
+                  {
+                    label: "Tier One",
+                    value: "1"
+                  },
+                  {
+                    label: "Tier Two",
+                    value: "2"
+                  },
+                  {
+                    label: "Tier Three",
+                    value: "3"
                   }
-                }}
-              />
-              <RangeSlider
-                value={subscriberLength}
-                label="Minimum Subscriber Period (Months)"
-                min={0}
-                max={24}
-                output
-                onChange={val => {
-                  console.log("Rangeslider value", val);
-                  if (typeof val === "number") {
-                    setSubscriberLength(val);
-                  }
-                }}
-              />
-              <RangeSlider
-                value={subscriberLength}
-                label="Minimum Subscriber Period (Months)"
-                min={0}
-                max={24}
-                output
-                onChange={val => {
-                  console.log("Rangeslider value", val);
-                  if (typeof val === "number") {
-                    setSubscriberLength(val);
-                  }
-                }}
-              />
+                ]}
+              ></ChoiceList>
             </FormLayout>
+            <div style={{ paddingTop: "12px" }}>
+              <ButtonGroup>
+                <Button
+                  destructive
+                  onClick={() => console.log("destructive clicked")}
+                >
+                  Delete Rule
+                </Button>
+                <Button
+                  primary
+                  onClick={() => {
+                    const {
+                      newPendingRules,
+                      newApprovedRules
+                    } = handleRuleApproval(rule);
+                    setPendingRules(newPendingRules);
+                    setApprovedRules(newApprovedRules);
+                  }}
+                >
+                  Save Rule
+                </Button>
+              </ButtonGroup>
+            </div>
           </Form>
         </div>
       </div>
