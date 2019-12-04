@@ -86,9 +86,10 @@ export const CreateExclusivityRule: React.FC<{
       >
         <Button
           onClick={() => {
-            if (pendingRules) {
+            if (pendingRules && selected) {
               mergePendingRules([...pendingRules, selected]);
             } else if (selected) {
+              console.log(selected);
               mergePendingRules([selected]);
             }
           }}

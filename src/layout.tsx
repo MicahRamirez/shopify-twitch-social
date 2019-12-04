@@ -1,17 +1,7 @@
 import React, { useState } from "react";
-import { Layout, Card } from "@shopify/polaris";
+import { Layout, Card, Heading } from "@shopify/polaris";
 import { CreateExclusivityRule, ExclusivityRule } from "./exclusivity-select";
-
-const PendingRule: React.FC<{ rule: { label: string; value: string } }> = ({
-  rule
-}) => {
-  return (
-    <Card>
-      <img src="/smiley.png" alt="smiley-face" />
-      {rule.value}
-    </Card>
-  );
-};
+import { PendingRule } from "./pending-rule";
 
 /**
  * Dropdown with all listed items in the store,
@@ -35,6 +25,7 @@ export const LayoutComponent: React.FC<{}> = _ => {
             mergePendingRules={mergePendingRules}
           />
         </Card>
+        {pendingRules && <Heading>Approve pending rules</Heading>}
         {pendingRules && pendingRules.map(rule => <PendingRule rule={rule} />)}
       </Layout.AnnotatedSection>
       <Layout.Section></Layout.Section>
