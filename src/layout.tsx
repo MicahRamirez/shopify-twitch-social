@@ -1,7 +1,20 @@
 import React, { useState } from "react";
 import { Layout, Card, Heading } from "@shopify/polaris";
-import { CreateExclusivityRule, ExclusivityRule } from "./exclusivity-select";
+import { CreateExclusivityRule } from "./exclusivity-select";
 import { PendingRule } from "./pending-rule";
+import { useEffect } from "react";
+import {
+  generateShopifyMockProducts,
+  ShopifyProduct
+} from "./mocks/mockProducts";
+
+export interface ExclusivityRule {
+  tierRequirement?: number[];
+  subscriberDuration?: number;
+  platform?: string;
+  productId: string;
+  status: "pending" | "approved";
+}
 
 const ApprovedRulesDisplay: React.FC<{
   approvedRules: ExclusivityRule[];
@@ -10,7 +23,7 @@ const ApprovedRulesDisplay: React.FC<{
   return (
     <Card>
       {approvedRules.map(approvedRule => {
-        return <div>{approvedRule.label}</div>;
+        return <div>{approvedRule.productId}</div>;
       })}
     </Card>
   );
@@ -21,24 +34,61 @@ const ApprovedRulesDisplay: React.FC<{
  * on select add a new entry for a rule
  */
 export const LayoutComponent: React.FC<{}> = _ => {
+  // to eventually pull from shopify product list
+  const [products, setProducts] = useState<ShopifyProduct[]>([]);
+  console.log("skip auth", process.env.SKIP_AUTH);
+  useEffect(() => {
+    setProducts(generateShopifyMockProducts(6));
+  }, []);
+  // uuid to shopify product model
+  const productMap = products.reduce<{ [key: string]: ShopifyProduct }>(
+    (acc, curr) => {
+      return {
+        ...acc,
+        [curr.id]: curr
+      };
+    },
+    {}
+  );
   // used to hold rules that the user in attempting to configure for exclusivity
   // in order from a rule to move from this set to Shopify Metadata Store
   // the user needs to confirm their validity
-  const [pendingRules, mergePendingRules] = useState<ExclusivityRule[]>();
-  const [approvedRules, setApprovedRules] = useState<ExclusivityRule[]>([]);
-  const handleRuleApproval = (approvedRule: ExclusivityRule) => {
-    if (!pendingRules) {
-      console.log("cant approve what DNE");
-      return {};
-    }
-    // invariant THIS RULE CANNOT ALREADY EXIST IN THE APPROVED RULE LIST
-    return {
-      newPendingRules: pendingRules.filter(
-        pendingRule => pendingRule.value !== approvedRule.value
-      ),
-      newApprovedRules: [...approvedRules, approvedRule]
-    };
+  const [exclusivityRules, setExclusivityRules] = useState<ExclusivityRule[]>(
+    []
+  );
+  const productIdsWithExclusivityRules = exclusivityRules.reduce(
+    (acc, curr) => ({ ...acc, ...{ [curr.productId]: true } }),
+    {}
+  );
+
+  const addNewRule = (productId: string) => {
+    // rerenders the whole page?
+    setExclusivityRules([
+      ...exclusivityRules,
+      { status: "pending", productId: productId }
+    ]);
   };
+
+  const updateRule = (updatedRule: ExclusivityRule) => {
+    const updatedSet = exclusivityRules.filter(
+      rule => rule.productId !== updatedRule.productId
+    );
+    updatedSet.push(updatedRule);
+    setExclusivityRules(updatedSet);
+  };
+  // may need to memo this
+  const productsWithoutRules = products.filter(
+    product => !(product.id in productIdsWithExclusivityRules)
+  );
+
+  const pendingRules = exclusivityRules.filter(
+    rule => rule.status === "pending"
+  );
+
+  const approvedRules = exclusivityRules.filter(
+    rule => rule.status === "approved"
+  );
+
   return (
     <Layout>
       <Layout.AnnotatedSection
@@ -48,8 +98,8 @@ export const LayoutComponent: React.FC<{}> = _ => {
         <Card title="Select a product to add an exclusivity rule.">
           <CreateExclusivityRule
             key={`${pendingRules ? pendingRules.length : "default"}`}
-            pendingRules={pendingRules}
-            mergePendingRules={mergePendingRules}
+            addNewRule={addNewRule}
+            products={productsWithoutRules}
           />
         </Card>
         {pendingRules && (
@@ -61,10 +111,9 @@ export const LayoutComponent: React.FC<{}> = _ => {
           pendingRules.map((rule, key) => (
             <PendingRule
               key={key}
+              product={productMap[rule.productId]}
               rule={rule}
-              setApprovedRules={setApprovedRules}
-              setPendingRules={mergePendingRules}
-              handleRuleApproval={handleRuleApproval}
+              updateRule={updateRule}
             />
           ))}
         {approvedRules && (

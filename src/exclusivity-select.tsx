@@ -1,46 +1,19 @@
 import React, { useState } from "react";
 import { Select, Button } from "@shopify/polaris";
-import {
-  generateShopifyMockProducts,
-  ShopifyProduct
-} from "./mocks/mockProducts";
-import { useEffect } from "react";
-
-export interface ExclusivityRule {
-  label: string;
-  value: string;
-}
+import { ShopifyProduct } from "./mocks/mockProducts";
 
 export const CreateExclusivityRule: React.FC<{
-  mergePendingRules: Function;
-  pendingRules: ExclusivityRule[] | undefined;
-}> = ({ mergePendingRules, pendingRules }) => {
+  addNewRule: Function;
+  products: ShopifyProduct[];
+}> = ({ addNewRule, products }) => {
   // generate mock items once
-  useEffect(() => {
-    const mockShopifyProducts = generateShopifyMockProducts(6);
-    setGeneratedMock(mockShopifyProducts);
-  }, []);
-  // TODO: Remove mock generation?
-  const [generatedMock, setGeneratedMock] = useState<ShopifyProduct[]>([]);
-  const [selected, setSelectedProduct] = useState<ShopifyProduct>();
   const [selectValue, setSelectValue] = useState();
   // probably need to memo
-  const options = generatedMock.map(({ id, title }) => ({
+  const options = products.map(({ id, title }) => ({
     value: id,
     label: title
   }));
-  // map ids (select value) to product object
-  const productMap = generatedMock.reduce<{ [key: string]: ShopifyProduct }>(
-    (acc, curr) => {
-      return {
-        ...acc,
-        [curr.id]: curr
-      };
-    },
-    {}
-  );
   console.log(options);
-  console.log("selected title", selected && selected.title);
   return (
     <div
       style={{
@@ -62,11 +35,8 @@ export const CreateExclusivityRule: React.FC<{
           placeholder="Select a product"
           value={selectValue}
           onChange={val => {
-            const selectedProduct = productMap[val];
-            // idx into the arr
-            setSelectedProduct(selectedProduct);
             // the select requires the VALUE in the options, DUH
-            setSelectValue(selectedProduct.id);
+            setSelectValue(val);
           }}
         />
       </div>
@@ -79,12 +49,7 @@ export const CreateExclusivityRule: React.FC<{
       >
         <Button
           onClick={() => {
-            if (pendingRules && selected) {
-              mergePendingRules([...pendingRules, selected]);
-            } else if (selected) {
-              console.log(selected);
-              mergePendingRules([selected]);
-            }
+            addNewRule(selectValue);
           }}
         >
           Add a rule

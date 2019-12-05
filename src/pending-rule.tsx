@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import {
   Card,
   Form,
@@ -9,31 +9,17 @@ import {
   ChoiceList
 } from "@shopify/polaris";
 
-const testImagePaths: { [numberIdx: number]: string } = {
-  0: "/test_image_one.png",
-  1: "/test_image_two.png",
-  2: "/test_image_three.png"
-};
-
-const randomIntInRange = (max: number) => {
-  return Math.floor(Math.random() * Math.floor(max));
-};
+import { ExclusivityRule } from "./layout";
+import { ShopifyProduct } from "./mocks/mockProducts";
 
 export const PendingRule: React.FC<{
-  rule: { label: string; value: string };
-  setApprovedRules: Function;
-  setPendingRules: Function;
-  handleRuleApproval: Function;
-}> = ({ rule, handleRuleApproval, setApprovedRules, setPendingRules }) => {
-  const [subscriberLength, setSubscriberLength] = useState(0);
-  const [subscriberTier, setSubscriberTier] = useState([]);
-  const handleChange = useCallback(value => setSubscriberTier(value), []);
-
-  // todo REMOVE
-  const [ruleRandomNum, setRuleRandomNum] = useState();
-  useEffect(() => {
-    setRuleRandomNum(randomIntInRange(3));
-  }, []);
+  rule: ExclusivityRule;
+  product: ShopifyProduct;
+  updateRule: Function;
+}> = ({ rule, product, updateRule }) => {
+  const [subscriberDuration, setSubscriberDuration] = useState(0);
+  const [tierRequirement, setTierRequirement] = useState([]);
+  const handleChange = useCallback(value => setTierRequirement(value), []);
 
   return (
     <Card>
@@ -46,16 +32,20 @@ export const PendingRule: React.FC<{
             alignItems: "center"
           }}
         >
-          <img src={testImagePaths[ruleRandomNum]} alt="smiley-face" />
+          <img
+            src={product.featuredImage}
+            alt="smiley-face"
+            style={{ maxWidth: "200px", minWidth: "200px" }}
+          />
           <div style={{ display: "flex" }}>
-            <p> {rule.label}</p>
+            <p> {product.title}</p>
           </div>
         </div>
         <div style={{ paddingTop: "24px", paddingBottom: "24px" }}>
           <Form onSubmit={() => console.log("submitted")}>
             <FormLayout>
               <RangeSlider
-                value={subscriberLength}
+                value={subscriberDuration}
                 label="Minimum subscriber period (in months)"
                 min={0}
                 max={24}
@@ -63,14 +53,14 @@ export const PendingRule: React.FC<{
                 onChange={val => {
                   console.log("Rangeslider value", val);
                   if (typeof val === "number") {
-                    setSubscriberLength(val);
+                    setSubscriberDuration(val);
                   }
                 }}
               />
               <ChoiceList
                 allowMultiple
                 onChange={handleChange}
-                selected={subscriberTier}
+                selected={tierRequirement}
                 title="Tiers that can access the item"
                 choices={[
                   {
@@ -98,14 +88,15 @@ export const PendingRule: React.FC<{
                 </Button>
                 <Button
                   primary
-                  onClick={() => {
-                    const {
-                      newPendingRules,
-                      newApprovedRules
-                    } = handleRuleApproval(rule);
-                    setPendingRules(newPendingRules);
-                    setApprovedRules(newApprovedRules);
-                  }}
+                  onClick={() =>
+                    updateRule({
+                      ...rule,
+                      tierRequirement,
+                      subscriberDuration,
+                      platform: "twitch",
+                      status: "approve"
+                    })
+                  }
                 >
                   Save Rule
                 </Button>

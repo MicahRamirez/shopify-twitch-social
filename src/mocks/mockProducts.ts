@@ -29,7 +29,13 @@ export const generateShopifyMockProducts = (numProducts: number) => {
       title: faker.lorem.sentence(12),
       createdAt: faker.date.past(0.2).toDateString(),
       description: faker.lorem.sentence(12),
-      featuredImage: faker.image.image(),
+      featuredImage: faker.image.imageUrl(
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        true
+      ),
       handle: faker.lorem.sentence(12),
       id: faker.random.uuid(),
       metafield: [faker.random.word()]
