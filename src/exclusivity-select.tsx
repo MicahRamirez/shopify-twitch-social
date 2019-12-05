@@ -1,36 +1,10 @@
 import React, { useState } from "react";
 import { Select, Button } from "@shopify/polaris";
-
-const MOCK_ITEMS = [
-  {
-    id: "1",
-    onlineStoreUrl: "someUrl",
-    title: "Hat"
-  },
-  {
-    id: "2",
-    onlineStoreUrl: undefined,
-    title: "Mug"
-  },
-  {
-    id: "3",
-    onlineStoreUrl: "someUrl",
-    title: "Tshirt"
-  },
-  {
-    id: "4",
-    onlineStoreUrl: "someUrl",
-    title: "Tenga"
-  }
-];
-
-interface RuleOptions {
-  // an option must have a label and id
-  label: string;
-  value: string;
-  // it can have other properties that we want to maintain as well
-  [x: string]: string;
-}
+import {
+  generateShopifyMockProducts,
+  ShopifyProduct
+} from "./mocks/mockProducts";
+import { useEffect } from "react";
 
 export interface ExclusivityRule {
   label: string;
@@ -41,12 +15,32 @@ export const CreateExclusivityRule: React.FC<{
   mergePendingRules: Function;
   pendingRules: ExclusivityRule[] | undefined;
 }> = ({ mergePendingRules, pendingRules }) => {
-  const [selected, setSelected] = useState<RuleOptions>();
+  // generate mock items once
+  useEffect(() => {
+    const mockShopifyProducts = generateShopifyMockProducts(6);
+    setGeneratedMock(mockShopifyProducts);
+  }, []);
+  // TODO: Remove mock generation?
+  const [generatedMock, setGeneratedMock] = useState<ShopifyProduct[]>([]);
+  const [selected, setSelectedProduct] = useState<ShopifyProduct>();
+  const [selectValue, setSelectValue] = useState();
   // probably need to memo
-  const options = MOCK_ITEMS.map(({ id, title }) => ({
+  const options = generatedMock.map(({ id, title }) => ({
     value: id,
     label: title
   }));
+  // map ids (select value) to product object
+  const productMap = generatedMock.reduce<{ [key: string]: ShopifyProduct }>(
+    (acc, curr) => {
+      return {
+        ...acc,
+        [curr.id]: curr
+      };
+    },
+    {}
+  );
+  console.log(options);
+  console.log("selected title", selected && selected.title);
   return (
     <div
       style={{
@@ -66,16 +60,18 @@ export const CreateExclusivityRule: React.FC<{
           options={options}
           label="Add a new exclusivity rule"
           placeholder="Select a product"
-          value={selected && selected.value}
+          value={selectValue}
           onChange={val => {
+            debugger;
+            console.log("select val", val);
+            const selectedProduct = productMap[val];
+            console.log("Selected product", selectedProduct);
             // idx into the arr
-            const { label, value } = options[parseInt(val) - 1];
-            setSelected({
-              label,
-              value
-            });
+            setSelectedProduct(selectedProduct);
+            // the select requires the VALUE in the options, DUH
+            setSelectValue(selectedProduct.id);
           }}
-        ></Select>
+        />
       </div>
       <div
         style={{
