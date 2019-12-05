@@ -62,10 +62,7 @@ export const CreateExclusivityRule: React.FC<{
           placeholder="Select a product"
           value={selectValue}
           onChange={val => {
-            debugger;
-            console.log("select val", val);
             const selectedProduct = productMap[val];
-            console.log("Selected product", selectedProduct);
             // idx into the arr
             setSelectedProduct(selectedProduct);
             // the select requires the VALUE in the options, DUH
