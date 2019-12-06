@@ -8,6 +8,9 @@ import {
   ShopifyProduct
 } from "./mocks/mockProducts";
 
+export const EXCLUSIVITY_APPROVED = "approved";
+export const EXCLUSIVITY_PENDING = "pending";
+
 export interface ExclusivityRule {
   tierRequirement?: number[];
   subscriberDuration?: number;
@@ -65,7 +68,7 @@ export const LayoutComponent: React.FC<{}> = _ => {
     // rerenders the whole page?
     setExclusivityRules([
       ...exclusivityRules,
-      { status: "pending", productId: productId }
+      { status: EXCLUSIVITY_PENDING, productId: productId }
     ]);
   };
 
@@ -82,13 +85,13 @@ export const LayoutComponent: React.FC<{}> = _ => {
   );
 
   const pendingRules = exclusivityRules.filter(
-    rule => rule.status === "pending"
+    rule => rule.status === EXCLUSIVITY_PENDING
   );
 
   const approvedRules = exclusivityRules.filter(
-    rule => rule.status === "approved"
+    rule => rule.status === EXCLUSIVITY_APPROVED
   );
-
+  console.log("APPROVED RULES", approvedRules);
   return (
     <Layout>
       <Layout.AnnotatedSection

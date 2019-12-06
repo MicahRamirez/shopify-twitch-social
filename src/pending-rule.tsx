@@ -9,7 +9,7 @@ import {
   ChoiceList
 } from "@shopify/polaris";
 
-import { ExclusivityRule } from "./layout";
+import { ExclusivityRule, EXCLUSIVITY_APPROVED } from "./layout";
 import { ShopifyProduct } from "./mocks/mockProducts";
 
 export const PendingRule: React.FC<{
@@ -94,7 +94,7 @@ export const PendingRule: React.FC<{
                       tierRequirement,
                       subscriberDuration,
                       platform: "twitch",
-                      status: "approve"
+                      status: EXCLUSIVITY_APPROVED
                     })
                   }
                 >
