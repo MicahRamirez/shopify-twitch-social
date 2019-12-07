@@ -7,6 +7,7 @@ import {
   generateShopifyMockProducts,
   ShopifyProduct
 } from "./mocks/mockProducts";
+import { ApprovedRuleDisplay } from "./approved-rule";
 
 export const EXCLUSIVITY_APPROVED = "approved";
 export const EXCLUSIVITY_PENDING = "pending";
@@ -18,19 +19,6 @@ export interface ExclusivityRule {
   productId: string;
   status: "pending" | "approved";
 }
-
-const ApprovedRulesDisplay: React.FC<{
-  approvedRules: ExclusivityRule[];
-}> = ({ approvedRules }) => {
-  console.log(approvedRules);
-  return (
-    <Card>
-      {approvedRules.map(approvedRule => {
-        return <div>{approvedRule.productId}</div>;
-      })}
-    </Card>
-  );
-};
 
 /**
  * Dropdown with all listed items in the store,
@@ -53,6 +41,7 @@ export const LayoutComponent: React.FC<{}> = _ => {
     },
     {}
   );
+
   // used to hold rules that the user in attempting to configure for exclusivity
   // in order from a rule to move from this set to Shopify Metadata Store
   // the user needs to confirm their validity
@@ -91,6 +80,15 @@ export const LayoutComponent: React.FC<{}> = _ => {
   const approvedRules = exclusivityRules.filter(
     rule => rule.status === EXCLUSIVITY_APPROVED
   );
+
+  const ruleMap = approvedRules.reduce<{
+    [key: string]: ExclusivityRule;
+  }>((acc, curr) => {
+    return {
+      ...acc,
+      [curr.productId]: curr
+    };
+  }, {});
   console.log("APPROVED RULES", approvedRules);
   return (
     <Layout>
@@ -125,7 +123,11 @@ export const LayoutComponent: React.FC<{}> = _ => {
           </div>
         )}
         {approvedRules && (
-          <ApprovedRulesDisplay approvedRules={approvedRules} />
+          <ApprovedRuleDisplay
+            rules={approvedRules}
+            ruleMap={ruleMap}
+            productMap={productMap}
+          />
         )}
       </Layout.AnnotatedSection>
       <Layout.Section></Layout.Section>
