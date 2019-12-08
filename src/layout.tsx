@@ -27,9 +27,9 @@ export interface ExclusivityRule {
 export const LayoutComponent: React.FC<{}> = _ => {
   // to eventually pull from shopify product list
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
-  console.log("skip auth", process.env.SKIP_AUTH);
   useEffect(() => {
-    if (process.env.SKIP_AUTH === "true") {
+    // when skip auth is defined we use mocks
+    if (process.env.SKIP_AUTH) {
       setProducts(generateShopifyMockProducts(6));
     }
   }, []);
