@@ -114,12 +114,12 @@ export const LayoutComponent: React.FC<{}> = _ => {
             products={productsWithoutRules}
           />
         </Card>
-        {pendingRules && (
+        {pendingRules.length > 0 && (
           <div style={{ paddingTop: "24px", paddingBottom: "12px" }}>
             <Heading>Pending Rules</Heading>
           </div>
         )}
-        {pendingRules &&
+        {pendingRules.length > 0 &&
           pendingRules.map((rule, key) => (
             <PendingRule
               key={key}
@@ -129,12 +129,12 @@ export const LayoutComponent: React.FC<{}> = _ => {
               destroyRule={destroyRule}
             />
           ))}
-        {approvedRules && (
+        {approvedRules.length > 0 && (
           <div style={{ paddingTop: "24px", paddingBottom: "12px" }}>
             <Heading>Approved Rules </Heading>
           </div>
         )}
-        {approvedRules && (
+        {approvedRules.length > 0 && (
           <ApprovedRuleDisplay
             rules={approvedRules}
             ruleMap={ruleMap}
