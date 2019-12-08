@@ -13,7 +13,7 @@ export const EXCLUSIVITY_APPROVED = "approved";
 export const EXCLUSIVITY_PENDING = "pending";
 
 export interface ExclusivityRule {
-  tierRequirement?: number[];
+  tierRequirement: string;
   subscriberDuration?: number;
   platform?: string;
   productId: string;
@@ -59,7 +59,11 @@ export const LayoutComponent: React.FC<{}> = _ => {
     // rerenders the whole page?
     setExclusivityRules([
       ...exclusivityRules,
-      { status: EXCLUSIVITY_PENDING, productId: productId }
+      {
+        status: EXCLUSIVITY_PENDING,
+        productId: productId,
+        tierRequirement: "0"
+      }
     ]);
   };
 

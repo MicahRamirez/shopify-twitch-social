@@ -6,7 +6,8 @@ import {
   RangeSlider,
   ButtonGroup,
   Button,
-  ChoiceList
+  Stack,
+  RadioButton
 } from "@shopify/polaris";
 
 import { ExclusivityRule, EXCLUSIVITY_APPROVED } from "./layout";
@@ -19,8 +20,11 @@ export const PendingRule: React.FC<{
   destroyRule: Function;
 }> = ({ rule, product, updateRule, destroyRule }) => {
   const [subscriberDuration, setSubscriberDuration] = useState(0);
-  const [tierRequirement, setTierRequirement] = useState([]);
-  const handleChange = useCallback(value => setTierRequirement(value), []);
+  const [tierValue, setTierValue] = useState<string>(rule.tierRequirement);
+  const handleRadioChange = useCallback((_checked: any, newValue: string) => {
+    console.log("radio onchange", newValue, _checked);
+    setTierValue(newValue);
+  }, []);
 
   return (
     <Card>
@@ -58,26 +62,40 @@ export const PendingRule: React.FC<{
                   }
                 }}
               />
-              <ChoiceList
-                allowMultiple
-                onChange={handleChange}
-                selected={tierRequirement}
-                title="Tiers that can access the item"
-                choices={[
-                  {
-                    label: "Tier One",
-                    value: "1"
-                  },
-                  {
-                    label: "Tier Two",
-                    value: "2"
-                  },
-                  {
-                    label: "Tier Three",
-                    value: "3"
-                  }
-                ]}
-              ></ChoiceList>
+              <Stack vertical>
+                <RadioButton
+                  checked={tierValue === "0"}
+                  label="Everyone"
+                  helpText="Allows any user to purchase this product"
+                  id="0"
+                  name="free"
+                  onChange={handleRadioChange}
+                />
+                <RadioButton
+                  checked={tierValue === "1"}
+                  label="Tier One"
+                  helpText="Allows any subscriber to purchase this product"
+                  id="1"
+                  name="tier-one"
+                  onChange={handleRadioChange}
+                />
+                <RadioButton
+                  checked={tierValue === "2"}
+                  label="Tier Two"
+                  helpText="Allows tier two or higher subscriber to purchase this product"
+                  id="2"
+                  name="tier-two"
+                  onChange={handleRadioChange}
+                />
+                <RadioButton
+                  checked={tierValue === "3"}
+                  label="Tier Three"
+                  helpText="Allows any tier three subscriber to purchase this product"
+                  id="3"
+                  name="tier-three"
+                  onChange={handleRadioChange}
+                />
+              </Stack>
             </FormLayout>
             <div style={{ paddingTop: "12px" }}>
               <ButtonGroup>
@@ -89,7 +107,7 @@ export const PendingRule: React.FC<{
                   onClick={() =>
                     updateRule({
                       ...rule,
-                      tierRequirement,
+                      tierValue,
                       subscriberDuration,
                       platform: "twitch",
                       status: EXCLUSIVITY_APPROVED

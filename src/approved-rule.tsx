@@ -5,11 +5,26 @@ import {
   ResourceItem,
   Avatar,
   TextStyle,
-  ResourceListSelectedItems
+  ResourceListSelectedItems,
+  DescriptionList
 } from "@shopify/polaris";
 
 import { ShopifyProduct } from "./mocks/mockProducts";
 import { ExclusivityRule } from "./layout";
+
+// const tierMapping = {
+//   0: "This product is available to all customers",
+//   1: "This product is available to subscribers",
+//   2: "This product is available to tier II subscribers and higher",
+//   3: "This product is only available to tier III subscribers"
+// };
+
+// // a tier is a very twitch centric concept
+// const generateTierDescription = (rule: ExclusivityRule) => {
+//   const description = "";
+//   const tierSentences =
+//     rule.tierRequirement && rule.tierRequirement.map(tier => tier);
+// };
 
 export const ApprovedRuleDisplay: React.FC<{
   productMap: { [id: string]: ShopifyProduct };
@@ -28,6 +43,15 @@ export const ApprovedRuleDisplay: React.FC<{
         sortOrder={index}
         onClick={() => console.log("clicking item", item.title)}
       >
+        <DescriptionList
+          items={[
+            {
+              term: "Available for Tier",
+              description: "test description"
+            }
+          ]}
+        />
+
         <h3>
           <TextStyle variation="strong">{name}</TextStyle>
         </h3>
