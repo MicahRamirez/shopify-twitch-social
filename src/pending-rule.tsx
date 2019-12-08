@@ -7,7 +7,8 @@ import {
   ButtonGroup,
   Button,
   Stack,
-  RadioButton
+  RadioButton,
+  Thumbnail
 } from "@shopify/polaris";
 
 import { ExclusivityRule, EXCLUSIVITY_APPROVED } from "./layout";
@@ -22,7 +23,6 @@ export const PendingRule: React.FC<{
   const [subscriberDuration, setSubscriberDuration] = useState(0);
   const [tierValue, setTierValue] = useState<string>(rule.tierRequirement);
   const handleRadioChange = useCallback((_checked: any, newValue: string) => {
-    console.log("radio onchange", newValue, _checked);
     setTierValue(newValue);
   }, []);
 
@@ -37,10 +37,10 @@ export const PendingRule: React.FC<{
             alignItems: "center"
           }}
         >
-          <img
-            src={product.featuredImage}
-            alt="smiley-face"
-            style={{ maxWidth: "200px", minWidth: "200px" }}
+          <Thumbnail
+            source={product.featuredImage}
+            alt={product.title}
+            size={"large"}
           />
           <div style={{ display: "flex" }}>
             <p> {product.title}</p>
@@ -49,19 +49,6 @@ export const PendingRule: React.FC<{
         <div style={{ paddingTop: "24px", paddingBottom: "24px" }}>
           <Form onSubmit={() => console.log("submitted")}>
             <FormLayout>
-              <RangeSlider
-                value={subscriberDuration}
-                label="Minimum subscriber period (in months)"
-                min={0}
-                max={24}
-                output
-                onChange={val => {
-                  console.log("Rangeslider value", val);
-                  if (typeof val === "number") {
-                    setSubscriberDuration(val);
-                  }
-                }}
-              />
               <Stack vertical>
                 <RadioButton
                   checked={tierValue === "0"}
@@ -95,6 +82,21 @@ export const PendingRule: React.FC<{
                   name="tier-three"
                   onChange={handleRadioChange}
                 />
+                {tierValue !== "0" && (
+                  <RangeSlider
+                    value={subscriberDuration}
+                    label="Minimum subscriber period (in months)"
+                    min={1}
+                    max={24}
+                    output
+                    onChange={val => {
+                      console.log("Rangeslider value", val);
+                      if (typeof val === "number") {
+                        setSubscriberDuration(val);
+                      }
+                    }}
+                  />
+                )}
               </Stack>
             </FormLayout>
             <div style={{ paddingTop: "12px" }}>

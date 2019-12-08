@@ -3,8 +3,7 @@ import {
   Card,
   ResourceList,
   ResourceItem,
-  Avatar,
-  TextStyle,
+  Thumbnail,
   ResourceListSelectedItems,
   DescriptionList
 } from "@shopify/polaris";
@@ -12,12 +11,12 @@ import {
 import { ShopifyProduct } from "./mocks/mockProducts";
 import { ExclusivityRule } from "./layout";
 
-// const tierMapping = {
-//   0: "This product is available to all customers",
-//   1: "This product is available to subscribers",
-//   2: "This product is available to tier II subscribers and higher",
-//   3: "This product is only available to tier III subscribers"
-// };
+const tierRequirementDescriptionMap: { [tierRequirement: string]: string } = {
+  "0": "This product is available to all customers",
+  "1": "This product is available to subscribers",
+  "2": "This product is available to tier II subscribers and higher",
+  "3": "This product is only available to tier III subscribers"
+};
 
 // // a tier is a very twitch centric concept
 // const generateTierDescription = (rule: ExclusivityRule) => {
@@ -34,7 +33,7 @@ export const ApprovedRuleDisplay: React.FC<{
   const renderItem = (rule: ExclusivityRule, _: any, index: number) => {
     const item = productMap[rule.productId];
     const media = (
-      <Avatar name={item.title} source={item.featuredImage} size={"medium"} />
+      <Thumbnail source={item.featuredImage} size={"large"} alt={item.title} />
     );
     return (
       <ResourceItem
@@ -46,16 +45,21 @@ export const ApprovedRuleDisplay: React.FC<{
         <DescriptionList
           items={[
             {
-              term: "Available for Tier",
-              description: "test description"
+              term: "Product Name",
+              description: item.title
+            },
+            {
+              term: "Available For Tier",
+              description: `${
+                tierRequirementDescriptionMap[rule.tierRequirement]
+              }`
+            },
+            {
+              term: "Minimum Subscriber Period",
+              description: `The user must be subscribed for ${rule.subscriberDuration} months`
             }
           ]}
         />
-
-        <h3>
-          <TextStyle variation="strong">{name}</TextStyle>
-        </h3>
-        <div>{item.title}</div>
       </ResourceItem>
     );
   };
