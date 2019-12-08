@@ -16,7 +16,8 @@ export const PendingRule: React.FC<{
   rule: ExclusivityRule;
   product: ShopifyProduct;
   updateRule: Function;
-}> = ({ rule, product, updateRule }) => {
+  destroyRule: Function;
+}> = ({ rule, product, updateRule, destroyRule }) => {
   const [subscriberDuration, setSubscriberDuration] = useState(0);
   const [tierRequirement, setTierRequirement] = useState([]);
   const handleChange = useCallback(value => setTierRequirement(value), []);
@@ -80,10 +81,7 @@ export const PendingRule: React.FC<{
             </FormLayout>
             <div style={{ paddingTop: "12px" }}>
               <ButtonGroup>
-                <Button
-                  destructive
-                  onClick={() => console.log("destructive clicked")}
-                >
+                <Button destructive onClick={() => destroyRule(product.id)}>
                   Delete Rule
                 </Button>
                 <Button

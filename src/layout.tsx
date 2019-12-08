@@ -89,7 +89,12 @@ export const LayoutComponent: React.FC<{}> = _ => {
       [curr.productId]: curr
     };
   }, {});
-  console.log("APPROVED RULES", approvedRules);
+
+  const destroyRule = (ruleId: string) => {
+    setExclusivityRules(
+      exclusivityRules.filter(rule => rule.productId !== ruleId)
+    );
+  };
   return (
     <Layout>
       <Layout.AnnotatedSection
@@ -115,6 +120,7 @@ export const LayoutComponent: React.FC<{}> = _ => {
               product={productMap[rule.productId]}
               rule={rule}
               updateRule={updateRule}
+              destroyRule={destroyRule}
             />
           ))}
         {approvedRules && (
