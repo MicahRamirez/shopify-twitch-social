@@ -29,7 +29,9 @@ export const LayoutComponent: React.FC<{}> = _ => {
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
   console.log("skip auth", process.env.SKIP_AUTH);
   useEffect(() => {
-    setProducts(generateShopifyMockProducts(6));
+    if (process.env.SKIP_AUTH === "true") {
+      setProducts(generateShopifyMockProducts(6));
+    }
   }, []);
   // uuid to shopify product model
   const productMap = products.reduce<{ [key: string]: ShopifyProduct }>(
