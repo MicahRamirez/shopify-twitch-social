@@ -27,3 +27,4 @@ Register the auth callback here, under _Whitelisted redirection URL(s)_
 - https://<NGROK_URL>/auth/callback
 
 https://YOUR_NGROK_ADDRESS.io/auth?shop=kusora.myshopify.com
+ね
