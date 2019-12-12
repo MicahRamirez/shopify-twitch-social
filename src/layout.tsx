@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { Layout, Card, Heading, SkeletonPage, Button } from "@shopify/polaris";
+import { Layout, Card, SkeletonPage, Button } from "@shopify/polaris";
 import { CreateExclusivityRule } from "./exclusivity-select";
 import { PendingRule } from "./pending-rule";
 import { ShopifyProduct } from "./mocks/mockProducts";
@@ -21,13 +21,20 @@ const CreateRuleWorkflow = ({
   onClick,
   pendingRules,
   addNewRule,
-  productsWithoutRules
+  productsWithoutRules,
+  productMap,
+  updateRule,
+  destroyRule
 }: {
   onClick: () => void;
   pendingRules: ExclusivityRule[];
   addNewRule: Function;
   productsWithoutRules: ShopifyProduct[];
+  productMap: { [productId: string]: ShopifyProduct };
+  updateRule: Function;
+  destroyRule: Function;
 }) => {
+  console.log(onClick);
   return (
     <Card sectioned title="Create an exclusivity rule">
       <CreateExclusivityRule
@@ -35,20 +42,40 @@ const CreateRuleWorkflow = ({
         addNewRule={addNewRule}
         products={productsWithoutRules}
       />
+      {pendingRules.length > 0 &&
+        pendingRules.map((rule, key) => (
+          <PendingRule
+            key={key}
+            product={productMap[rule.productId]}
+            rule={rule}
+            updateRule={updateRule}
+            destroyRule={destroyRule}
+          />
+        ))}
     </Card>
   );
 };
 
-const FirstPage = ({
+const MainPanel = ({
   onClick,
   approvedRules,
   ruleMap,
-  productMap
+  productMap,
+  pendingRules,
+  addNewRule,
+  productsWithoutRules,
+  destroyRule,
+  updateRule
 }: {
   onClick: () => void;
   approvedRules: ExclusivityRule[];
   ruleMap: { [key: string]: ExclusivityRule };
   productMap: { [productKey: string]: ShopifyProduct };
+  pendingRules: ExclusivityRule[];
+  addNewRule: Function;
+  productsWithoutRules: ShopifyProduct[];
+  updateRule: Function;
+  destroyRule: Function;
 }) => {
   return (
     <Layout>
@@ -60,7 +87,15 @@ const FirstPage = ({
         />
       </Layout.Section>
       <Layout.Section secondary>
-        <CreateRuleWorkflow onClick={onClick} />
+        <CreateRuleWorkflow
+          onClick={onClick}
+          pendingRules={pendingRules}
+          addNewRule={addNewRule}
+          productsWithoutRules={productsWithoutRules}
+          productMap={productMap}
+          updateRule={updateRule}
+          destroyRule={destroyRule}
+        />
       </Layout.Section>
     </Layout>
   );
@@ -140,12 +175,12 @@ export const LayoutComponent: React.FC<{
     product => !(product.id in productIdsWithExclusivityRules)
   );
 
-  const pendingRules = exclusivityRules.filter(
-    rule => rule.status === EXCLUSIVITY_PENDING
-  );
-
   const approvedRules = exclusivityRules.filter(
     rule => rule.status === EXCLUSIVITY_APPROVED
+  );
+
+  const pendingRules = exclusivityRules.filter(
+    rule => rule.status === EXCLUSIVITY_PENDING
   );
 
   const ruleMap = approvedRules.reduce<{
@@ -179,11 +214,16 @@ export const LayoutComponent: React.FC<{
   const pages = [
     ({ style }: any) => (
       <animated.div style={style}>
-        <FirstPage
+        <MainPanel
           onClick={flipAnimationManager}
           approvedRules={approvedRules}
           ruleMap={ruleMap}
           productMap={productMap}
+          productsWithoutRules={productsWithoutRules}
+          addNewRule={addNewRule}
+          pendingRules={pendingRules}
+          updateRule={updateRule}
+          destroyRule={destroyRule}
         />
       </animated.div>
     ),
@@ -207,32 +247,6 @@ export const LayoutComponent: React.FC<{
           const Component = pages[item];
           return <Component key={key} style={props} />;
         })}
-        <Layout.Section secondary>
-          <Card sectioned>
-            <Heading>Add new exclusivity rules.</Heading>
-            <Button onClick={() => console.log("animate")}>Add a rule</Button>
-            <CreateExclusivityRule
-              key={`${pendingRules ? pendingRules.length : "default"}`}
-              addNewRule={addNewRule}
-              products={productsWithoutRules}
-            />
-          </Card>
-          {pendingRules.length > 0 && (
-            <div style={{ paddingTop: "24px", paddingBottom: "12px" }}>
-              <Heading>Pending Rules</Heading>
-            </div>
-          )}
-          {pendingRules.length > 0 &&
-            pendingRules.map((rule, key) => (
-              <PendingRule
-                key={key}
-                product={productMap[rule.productId]}
-                rule={rule}
-                updateRule={updateRule}
-                destroyRule={destroyRule}
-              />
-            ))}
-        </Layout.Section>
       </Layout>
     </SkeletonPage>
   );
