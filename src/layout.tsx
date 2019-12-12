@@ -17,43 +17,71 @@ export interface ExclusivityRule {
   status: "pending" | "approved";
 }
 
-const CardOne = ({ onClick }: { onClick: () => void }) => {
+const CreateRuleWorkflow = ({
+  onClick,
+  pendingRules,
+  addNewRule,
+  productsWithoutRules
+}: {
+  onClick: () => void;
+  pendingRules: ExclusivityRule[];
+  addNewRule: Function;
+  productsWithoutRules: ShopifyProduct[];
+}) => {
   return (
-    <Layout.Section>
-      <Card sectioned>
-        <p>
-          The layout component should: Use sections with white backgrounds for
-          primary content and sections with grey backgrounds for secondary
-          content that is less important Center cards on the background when
-          there is no secondary card on the page to stop the content from
-          becoming too wide Group similar concepts and actions together in cards
-          Separate different cards using a full-width divider Structure
-          primary/secondary, two-column layouts so the primary ⅔ section is used
-          for main information and the secondary ⅓ section is used for
-          information that might not be used as often but remains helpful for
-          context or secondary tasks Use equal-width layouts with two or more
-          columns when each layout section has the same importance
-        </p>
-        <Button onClick={onClick}>Create a rule</Button>
-      </Card>
-    </Layout.Section>
+    <Card sectioned title="Create an exclusivity rule">
+      <CreateExclusivityRule
+        key={`${pendingRules ? pendingRules.length : "default"}`}
+        addNewRule={addNewRule}
+        products={productsWithoutRules}
+      />
+    </Card>
   );
 };
 
-const CardTwo = ({ onClick }: { onClick: () => void }) => {
+const FirstPage = ({
+  onClick,
+  approvedRules,
+  ruleMap,
+  productMap
+}: {
+  onClick: () => void;
+  approvedRules: ExclusivityRule[];
+  ruleMap: { [key: string]: ExclusivityRule };
+  productMap: { [productKey: string]: ShopifyProduct };
+}) => {
   return (
-    <Layout.Section>
-      <Card sectioned>
-        <p>
-          The layout component should: Use sections with white backgrounds for
-          primary content and sections with grey backgrounds for secondary
-          content that is less important Center cards on the background when
-          there is no secondary card on the page to stop the content from
-          becoming too wide Group similar concepts and actions together in cards
-        </p>
-        <Button onClick={onClick}>Start rule workflow</Button>
-      </Card>
-    </Layout.Section>
+    <Layout>
+      <Layout.Section>
+        <ApprovedRuleDisplay
+          rules={approvedRules}
+          ruleMap={ruleMap}
+          productMap={productMap}
+        />
+      </Layout.Section>
+      <Layout.Section secondary>
+        <CreateRuleWorkflow onClick={onClick} />
+      </Layout.Section>
+    </Layout>
+  );
+};
+
+const CreateRule = ({ onClick }: { onClick: () => void }) => {
+  console.log(onClick);
+  return (
+    <Card title="Create a new rule">
+      <Button onClick={onClick}>Create Rule</Button>
+    </Card>
+  );
+};
+
+const RuleCreationStep = ({ onClick }: { onClick: () => void }) => {
+  return (
+    <Layout>
+      <Layout.Section>
+        <CreateRule onClick={onClick} />
+      </Layout.Section>
+    </Layout>
   );
 };
 
@@ -134,7 +162,6 @@ export const LayoutComponent: React.FC<{
       exclusivityRules.filter(rule => rule.productId !== ruleId)
     );
   };
-  const [newRuleCreated, setNewRuleCreated] = useState(false);
   const [index, set] = useState(0);
   // const externalDataAnimationManager = useCallback(() => {
   //   console.log("animation manager invoked");
@@ -152,12 +179,17 @@ export const LayoutComponent: React.FC<{
   const pages = [
     ({ style }: any) => (
       <animated.div style={style}>
-        <CardOne onClick={flipAnimationManager} />
+        <FirstPage
+          onClick={flipAnimationManager}
+          approvedRules={approvedRules}
+          ruleMap={ruleMap}
+          productMap={productMap}
+        />
       </animated.div>
     ),
     ({ style }: any) => (
       <animated.div style={style}>
-        <CardTwo onClick={flipAnimationManager} />
+        <RuleCreationStep onClick={flipAnimationManager} />
       </animated.div>
     )
   ];
@@ -168,26 +200,13 @@ export const LayoutComponent: React.FC<{
   });
   // so when there are existing rules prioritize seeing them displayed in the main column
   // side panel for adding additional rules
-  console.log("newRuleCreated value", newRuleCreated);
   return (
     <SkeletonPage title="Exclusivity Rules">
       <Layout>
-        <Button onClick={() => setNewRuleCreated(!newRuleCreated)}>
-          Flip flag
-        </Button>
         {transitions.map(({ item, props, key }) => {
           const Component = pages[item];
           return <Component key={key} style={props} />;
         })}
-        {approvedRules.length > 0 && (
-          <Layout.Section>
-            <ApprovedRuleDisplay
-              rules={approvedRules}
-              ruleMap={ruleMap}
-              productMap={productMap}
-            />
-          </Layout.Section>
-        )}
         <Layout.Section secondary>
           <Card sectioned>
             <Heading>Add new exclusivity rules.</Heading>

@@ -45,7 +45,6 @@ export interface ShopifyProductGraph {
 const translateGraphToArray = (
   shopifyProductGraph: ShopifyProductGraph
 ): ShopifyProduct[] => {
-  debugger;
   return shopifyProductGraph.products
     ? shopifyProductGraph.products.edges.map(edge => {
         return {
