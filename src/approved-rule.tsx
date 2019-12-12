@@ -5,7 +5,8 @@ import {
   ResourceItem,
   Thumbnail,
   ResourceListSelectedItems,
-  DescriptionList
+  DescriptionList,
+  Heading
 } from "@shopify/polaris";
 
 import { ShopifyProduct } from "./mocks/mockProducts";
@@ -67,7 +68,10 @@ export const ApprovedRuleDisplay: React.FC<{
     []
   );
   return (
-    <Card>
+    <Card sectioned title="Approved Rules">
+      <div style={{ paddingTop: "24px", paddingBottom: "12px" }}>
+        <Heading>Approved Rules </Heading>
+      </div>
       <ResourceList
         resourceName={{
           singular: "Exclusivity Rule",

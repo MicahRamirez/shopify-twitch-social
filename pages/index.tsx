@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import queryString from "query-string";
 import { useRouter } from "next/router";
 import { LayoutComponent } from "../src/layout";
+import { GetProducts } from "../src/get-products";
+import { ShopifyProduct } from "../src/mocks/mockProducts";
 
 const CLIENT_ID = "6hf0fiwuk2127mjhs7hkuzy4xpqijf";
 const AUTH_URL = "https://id.twitch.tv/oauth2/authorize";
@@ -33,7 +35,12 @@ const Index: React.FC<{}> = _ => {
       {userToken && <p>{userToken}</p>}
       {userToken && <LoginToTwitch />}
       {userToken && <IsSubbedTo userToken={userToken} />}
-      <LayoutComponent />
+      <GetProducts>
+        {(data: ShopifyProduct[]) => {
+          console.log(data);
+          return <LayoutComponent shopifyProducts={data} />;
+        }}
+      </GetProducts>
     </div>
   );
 };
