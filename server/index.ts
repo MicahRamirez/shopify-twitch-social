@@ -5,6 +5,8 @@ import session from "koa-session";
 import next from "next";
 import myconfig from "dotenv";
 import shopifyAuth, { verifyRequest } from "@shopify/koa-shopify-auth";
+const { default: graphQLProxy } = require("@shopify/koa-shopify-graphql-proxy");
+const { ApiVersion } = require("@shopify/koa-shopify-graphql-proxy");
 
 myconfig.config();
 
@@ -16,9 +18,10 @@ const port = parseInt(process.env.PORT as string, 10) || 3000;
 const SHOPIFY_API_KEY = process.env.SHOPIFY_API_KEY;
 const SHOPIFY_API_SECRET_KEY = process.env.SHOPIFY_API_SECRET_KEY as string;
 const SKIP_AUTH = process.env.SKIP_AUTH === "true" ? true : false;
-const skipFunction: Koa.Middleware<
-  ParameterizedContext<Koa.DefaultState, Koa.DefaultContext>
-> = (_, next) => {
+const skipFunction: Koa.Middleware<ParameterizedContext<
+  Koa.DefaultState,
+  Koa.DefaultContext
+>> = (_, next) => {
   return next();
 };
 const server = new Koa();
@@ -56,7 +59,8 @@ app.prepare().then(() => {
           })
     )
     // everything after this point will require authentication
-    .use(SKIP_AUTH ? skipFunction : verifyRequest())
+    .use(verifyRequest())
+    .use(graphQLProxy({ version: ApiVersion.October19 }))
 
     .use(async (ctx: any) => {
       await handle(ctx.req, ctx.res);

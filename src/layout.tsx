@@ -8,6 +8,7 @@ import {
   ShopifyProduct
 } from "./mocks/mockProducts";
 import { ApprovedRuleDisplay } from "./approved-rule";
+import { GetProducts } from "./get-products";
 
 export const EXCLUSIVITY_APPROVED = "approved";
 export const EXCLUSIVITY_PENDING = "pending";
@@ -103,6 +104,7 @@ export const LayoutComponent: React.FC<{}> = _ => {
   };
   return (
     <Layout>
+      <GetProducts />
       <Layout.AnnotatedSection
         title="Rules"
         description="Create new or update existing rules to make your merch exclusive!"
