@@ -4,7 +4,7 @@ import { ShopifyProduct } from "./mocks/mockProducts";
 import gql from "graphql-tag";
 
 const GET_PRODUCTS_QUERY = gql`
-  query getProducts($test: Number!) {
+  query getProducts($test: Int!) {
     products(first: $test) {
       edges {
         node {
