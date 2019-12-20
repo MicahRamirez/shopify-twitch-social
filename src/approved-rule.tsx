@@ -18,13 +18,6 @@ const tierRequirementDescriptionMap: { [tierRequirement: string]: string } = {
   "3": "This product is only available to tier III subscribers"
 };
 
-// // a tier is a very twitch centric concept
-// const generateTierDescription = (rule: ExclusivityRule) => {
-//   const description = "";
-//   const tierSentences =
-//     rule.tierRequirement && rule.tierRequirement.map(tier => tier);
-// };
-
 export const ApprovedRuleDisplay: React.FC<{
   productMap: { [id: string]: ShopifyProduct };
   ruleMap: { [id: string]: ExclusivityRule };
@@ -67,7 +60,7 @@ export const ApprovedRuleDisplay: React.FC<{
     []
   );
   return (
-    <Card>
+    <Card sectioned title="Approved Rules">
       <ResourceList
         resourceName={{
           singular: "Exclusivity Rule",

@@ -26,7 +26,8 @@ export const CreateExclusivityRule: React.FC<{
         style={{
           display: "inline-block",
           paddingRight: "12px",
-          paddingLeft: "12px"
+          paddingLeft: "12px",
+          maxWidth: "350px"
         }}
       >
         <Select
@@ -44,7 +45,8 @@ export const CreateExclusivityRule: React.FC<{
         style={{
           paddingLeft: "12px",
           paddingRight: "12px",
-          display: "inline-block"
+          display: "inline-block",
+          paddingTop: "12px"
         }}
       >
         <Button

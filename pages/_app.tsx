@@ -1,4 +1,5 @@
 import "@shopify/polaris/styles.css";
+import "node-fetch";
 import React from "react";
 import App from "next/app";
 import Head from "next/head";
@@ -7,6 +8,15 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import theme from "../src/theme";
 import { AppProvider } from "@shopify/polaris";
 import translations from "@shopify/polaris/locales/en.json";
+import { ApolloProvider } from "react-apollo";
+
+import ApolloClient from "apollo-boost";
+
+const client = new ApolloClient({
+  fetchOptions: {
+    credentials: "include"
+  }
+});
 
 export default class MyApp extends App {
   componentDidMount() {
@@ -29,7 +39,9 @@ export default class MyApp extends App {
           {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
           <CssBaseline />
           <AppProvider i18n={translations}>
-            <Component {...pageProps} />
+            <ApolloProvider client={client}>
+              <Component {...pageProps} />
+            </ApolloProvider>
           </AppProvider>
         </ThemeProvider>
       </React.Fragment>

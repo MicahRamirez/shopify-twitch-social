@@ -28,26 +28,26 @@ export const PendingRule: React.FC<{
 
   return (
     <Card>
-      <div style={{ display: "flex", justifyContent: "space-around" }}>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center"
-          }}
-        >
-          <Thumbnail
-            source={product.featuredImage}
-            alt={product.title}
-            size={"large"}
-          />
-          <div style={{ display: "flex" }}>
-            <p> {product.title}</p>
+      <Form onSubmit={() => console.log("submitted")}>
+        <div style={{ display: "flex", justifyContent: "space-around" }}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center"
+            }}
+          >
+            <Thumbnail
+              source={product && product.featuredImage}
+              alt={product.title}
+              size={"large"}
+            />
+            <div style={{ display: "flex" }}>
+              <p> {product.title}</p>
+            </div>
           </div>
-        </div>
-        <div style={{ paddingTop: "24px", paddingBottom: "24px" }}>
-          <Form onSubmit={() => console.log("submitted")}>
+          <div style={{ paddingTop: "24px", paddingBottom: "24px" }}>
             <FormLayout>
               <Stack vertical>
                 <RadioButton
@@ -99,30 +99,37 @@ export const PendingRule: React.FC<{
                 )}
               </Stack>
             </FormLayout>
-            <div style={{ paddingTop: "12px" }}>
-              <ButtonGroup>
-                <Button destructive onClick={() => destroyRule(product.id)}>
-                  Delete Rule
-                </Button>
-                <Button
-                  primary
-                  onClick={() =>
-                    updateRule({
-                      ...rule,
-                      tierValue,
-                      subscriberDuration,
-                      platform: "twitch",
-                      status: EXCLUSIVITY_APPROVED
-                    })
-                  }
-                >
-                  Save Rule
-                </Button>
-              </ButtonGroup>
-            </div>
-          </Form>
+          </div>
         </div>
-      </div>
+        <div
+          style={{
+            paddingTop: "12px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center"
+          }}
+        >
+          <ButtonGroup>
+            <Button destructive onClick={() => destroyRule(product.id)}>
+              Delete Rule
+            </Button>
+            <Button
+              primary
+              onClick={() =>
+                updateRule({
+                  ...rule,
+                  tierValue,
+                  subscriberDuration,
+                  platform: "twitch",
+                  status: EXCLUSIVITY_APPROVED
+                })
+              }
+            >
+              Save Rule
+            </Button>
+          </ButtonGroup>
+        </div>
+      </Form>
     </Card>
   );
 };
