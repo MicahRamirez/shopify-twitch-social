@@ -2,6 +2,7 @@ import "isomorphic-fetch";
 import Koa from "koa";
 import logger from "winston";
 import session from "koa-session";
+import "node-fetch";
 import next from "next";
 import myconfig from "dotenv";
 import shopifyAuth, { verifyRequest } from "@shopify/koa-shopify-auth";
