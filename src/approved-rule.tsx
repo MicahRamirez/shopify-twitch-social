@@ -5,8 +5,7 @@ import {
   ResourceItem,
   Thumbnail,
   ResourceListSelectedItems,
-  DescriptionList,
-  Heading
+  DescriptionList
 } from "@shopify/polaris";
 
 import { ShopifyProduct } from "./mocks/mockProducts";
@@ -18,13 +17,6 @@ const tierRequirementDescriptionMap: { [tierRequirement: string]: string } = {
   "2": "This product is available to tier II subscribers and higher",
   "3": "This product is only available to tier III subscribers"
 };
-
-// // a tier is a very twitch centric concept
-// const generateTierDescription = (rule: ExclusivityRule) => {
-//   const description = "";
-//   const tierSentences =
-//     rule.tierRequirement && rule.tierRequirement.map(tier => tier);
-// };
 
 export const ApprovedRuleDisplay: React.FC<{
   productMap: { [id: string]: ShopifyProduct };
@@ -69,9 +61,6 @@ export const ApprovedRuleDisplay: React.FC<{
   );
   return (
     <Card sectioned title="Approved Rules">
-      <div style={{ paddingTop: "24px", paddingBottom: "12px" }}>
-        <Heading>Approved Rules </Heading>
-      </div>
       <ResourceList
         resourceName={{
           singular: "Exclusivity Rule",

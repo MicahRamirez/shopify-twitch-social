@@ -1,10 +1,9 @@
-import React, { useState, useCallback } from "react";
-import { Layout, Card, SkeletonPage, Button } from "@shopify/polaris";
-import { CreateExclusivityRule } from "./exclusivity-select";
-import { PendingRule } from "./pending-rule";
+import React, { useState } from "react";
+import { Layout, SkeletonPage } from "@shopify/polaris";
 import { ShopifyProduct } from "./mocks/mockProducts";
+
 import { ApprovedRuleDisplay } from "./approved-rule";
-import { useTransition, animated } from "react-spring";
+import { CreateRuleWorkflow } from "./create-rule-workflow";
 
 export const EXCLUSIVITY_APPROVED = "approved";
 export const EXCLUSIVITY_PENDING = "pending";
@@ -16,109 +15,6 @@ export interface ExclusivityRule {
   productId: string;
   status: "pending" | "approved";
 }
-
-const CreateRuleWorkflow = ({
-  onClick,
-  pendingRules,
-  addNewRule,
-  productsWithoutRules,
-  productMap,
-  updateRule,
-  destroyRule
-}: {
-  onClick: () => void;
-  pendingRules: ExclusivityRule[];
-  addNewRule: Function;
-  productsWithoutRules: ShopifyProduct[];
-  productMap: { [productId: string]: ShopifyProduct };
-  updateRule: Function;
-  destroyRule: Function;
-}) => {
-  console.log(onClick);
-  return (
-    <Card sectioned title="Create an exclusivity rule">
-      <CreateExclusivityRule
-        key={`${pendingRules ? pendingRules.length : "default"}`}
-        addNewRule={addNewRule}
-        products={productsWithoutRules}
-      />
-      {pendingRules.length > 0 &&
-        pendingRules.map((rule, key) => (
-          <PendingRule
-            key={key}
-            product={productMap[rule.productId]}
-            rule={rule}
-            updateRule={updateRule}
-            destroyRule={destroyRule}
-          />
-        ))}
-    </Card>
-  );
-};
-
-const MainPanel = ({
-  onClick,
-  approvedRules,
-  ruleMap,
-  productMap,
-  pendingRules,
-  addNewRule,
-  productsWithoutRules,
-  destroyRule,
-  updateRule
-}: {
-  onClick: () => void;
-  approvedRules: ExclusivityRule[];
-  ruleMap: { [key: string]: ExclusivityRule };
-  productMap: { [productKey: string]: ShopifyProduct };
-  pendingRules: ExclusivityRule[];
-  addNewRule: Function;
-  productsWithoutRules: ShopifyProduct[];
-  updateRule: Function;
-  destroyRule: Function;
-}) => {
-  return (
-    <Layout>
-      <Layout.Section>
-        <ApprovedRuleDisplay
-          rules={approvedRules}
-          ruleMap={ruleMap}
-          productMap={productMap}
-        />
-      </Layout.Section>
-      <Layout.Section secondary>
-        <CreateRuleWorkflow
-          onClick={onClick}
-          pendingRules={pendingRules}
-          addNewRule={addNewRule}
-          productsWithoutRules={productsWithoutRules}
-          productMap={productMap}
-          updateRule={updateRule}
-          destroyRule={destroyRule}
-        />
-      </Layout.Section>
-    </Layout>
-  );
-};
-
-const CreateRule = ({ onClick }: { onClick: () => void }) => {
-  console.log(onClick);
-  return (
-    <Card title="Create a new rule">
-      <Button onClick={onClick}>Create Rule</Button>
-    </Card>
-  );
-};
-
-const RuleCreationStep = ({ onClick }: { onClick: () => void }) => {
-  return (
-    <Layout>
-      <Layout.Section>
-        <CreateRule onClick={onClick} />
-      </Layout.Section>
-    </Layout>
-  );
-};
 
 /**
  * Dropdown with all listed items in the store,
@@ -197,56 +93,29 @@ export const LayoutComponent: React.FC<{
       exclusivityRules.filter(rule => rule.productId !== ruleId)
     );
   };
-  const [index, set] = useState(0);
-  // const externalDataAnimationManager = useCallback(() => {
-  //   console.log("animation manager invoked");
-  //   // new rule created, set the value to the idx of the original screen
-  //   // example with an external data source
-  //   if (newRuleCreated) {
-  //     set(1);
-  //   } else {
-  //     set(0);
-  //   }
-  // }, [newRuleCreated]);
-  const flipAnimationManager = useCallback(() => {
-    set(index => (index + 1) % 2);
-  }, []);
-  const pages = [
-    ({ style }: any) => (
-      <animated.div style={style}>
-        <MainPanel
-          onClick={flipAnimationManager}
-          approvedRules={approvedRules}
-          ruleMap={ruleMap}
-          productMap={productMap}
-          productsWithoutRules={productsWithoutRules}
-          addNewRule={addNewRule}
-          pendingRules={pendingRules}
-          updateRule={updateRule}
-          destroyRule={destroyRule}
-        />
-      </animated.div>
-    ),
-    ({ style }: any) => (
-      <animated.div style={style}>
-        <RuleCreationStep onClick={flipAnimationManager} />
-      </animated.div>
-    )
-  ];
-  const transitions = useTransition(index, p => p, {
-    from: { opacity: 0, transform: "translate3d(100%,0,0)" },
-    enter: { opacity: 1, transform: "translate3d(0%,0,0)" },
-    leave: { opacity: 0, transform: "translate3d(-50%,0,0)" }
-  });
+
   // so when there are existing rules prioritize seeing them displayed in the main column
   // side panel for adding additional rules
   return (
     <SkeletonPage title="Exclusivity Rules">
       <Layout>
-        {transitions.map(({ item, props, key }) => {
-          const Component = pages[item];
-          return <Component key={key} style={props} />;
-        })}
+        <Layout.Section>
+          <ApprovedRuleDisplay
+            rules={approvedRules}
+            ruleMap={ruleMap}
+            productMap={productMap}
+          />
+        </Layout.Section>
+        <Layout.Section>
+          <CreateRuleWorkflow
+            pendingRules={pendingRules}
+            addNewRule={addNewRule}
+            productsWithoutRules={productsWithoutRules}
+            productMap={productMap}
+            updateRule={updateRule}
+            destroyRule={destroyRule}
+          />
+        </Layout.Section>
       </Layout>
     </SkeletonPage>
   );

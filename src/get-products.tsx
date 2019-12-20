@@ -1,6 +1,6 @@
 import React from "react";
 import { useQuery } from "@apollo/react-hooks";
-import { SkeletonBodyText } from "@shopify/polaris";
+import { Spinner } from "@shopify/polaris";
 import { ShopifyProduct } from "./mocks/mockProducts";
 import gql from "graphql-tag";
 
@@ -63,7 +63,13 @@ export const GetProducts = (props: any) => {
   return (
     <div>
       {error && <p>THERE WAS AN ERROR</p>}
-      {loading && <SkeletonBodyText />}
+      {loading && (
+        <Spinner
+          accessibilityLabel="Spinner example"
+          size="large"
+          color="teal"
+        />
+      )}
       {!error && data && props.children(translateGraphToArray(data))}
     </div>
   );
